@@ -44,7 +44,9 @@ import java.util.Set;
 import static ru.nsu.crpo.auth.service.api.exception.ErrorCode.EXPIRED;
 import static ru.nsu.crpo.auth.service.api.exception.ErrorCode.UNAUTHORIZED;
 import static ru.nsu.crpo.auth.service.util.SecurityUtil.AUTHORITIES_CLAIM;
+import static ru.nsu.crpo.auth.service.util.SecurityUtil.MANAGER_ROLE;
 import static ru.nsu.crpo.auth.service.util.SecurityUtil.USER_CLAIM;
+import static ru.nsu.crpo.auth.service.util.SecurityUtil.USER_ROLE;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -118,7 +120,7 @@ public class DefaultAuthService implements AuthService {
         emailService.emailAddressIsExist(signInRequest.getEmail());
         User user = userMapper.toUser(signInRequest);
         user.setPassword(passwordService.encodePassword(signInRequest.getPassword()));
-        user.setRoles(Set.of(roleService.getRole(SecurityUtil.MANAGER_ROLE)));
+        user.setRoles(Set.of(roleService.getRole(USER_ROLE)));
         user = userService.saveUser(user);
         return userMapper.toSignInUserResponse(user);
     }
@@ -130,7 +132,7 @@ public class DefaultAuthService implements AuthService {
         User user = userMapper.toUser(createUserRequest);
         String password = passwordService.generateRandomPassword();
         user.setPassword(passwordService.encodePassword(password));
-        user.setRoles(Set.of(roleService.getRole(SecurityUtil.MANAGER_ROLE)));
+        user.setRoles(Set.of(roleService.getRole(MANAGER_ROLE)));
         User savedUser = userService.saveUser(user);
         return CreateUserResponse.builder()
                 .id(savedUser.getId())

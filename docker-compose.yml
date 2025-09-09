@@ -11,7 +11,7 @@ services:
     ports:
       - "${AUTH_PG_PORT}:5432"
     networks:
-      - sopd_sign_network
+      - gruzowiki_network
 
   auth_flyway:
     image: 'flyway/flyway:11.4'
@@ -31,7 +31,7 @@ services:
         condition: service_started
         restart: true
     networks:
-      - sopd_sign_network
+      - gruzowiki_network
 
   auth_service:
     build:
@@ -52,10 +52,10 @@ services:
     depends_on:
       - auth_db_postgres
     networks:
-      - sopd_sign_network
+      - gruzowiki_network
 
 networks:
-  sopd_sign_network:
-    name: "sopd-network"
+  gruzowiki_network:
+    name: "gruzowiki-network"
     driver: bridge
     external: true

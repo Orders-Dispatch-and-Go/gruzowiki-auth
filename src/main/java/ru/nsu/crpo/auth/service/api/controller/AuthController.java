@@ -13,6 +13,8 @@ import ru.nsu.crpo.auth.service.api.dto.auth.login.LoginRequest;
 import ru.nsu.crpo.auth.service.api.dto.auth.login.LoginResponse;
 import ru.nsu.crpo.auth.service.api.dto.auth.signin.CreateUserRequest;
 import ru.nsu.crpo.auth.service.api.dto.auth.signin.CreateUserResponse;
+import ru.nsu.crpo.auth.service.api.dto.auth.signin.SignInRequest;
+import ru.nsu.crpo.auth.service.api.dto.auth.signin.SignInResponse;
 import ru.nsu.crpo.auth.service.core.security.service.AuthService;
 
 import static ru.nsu.crpo.auth.service.api.ApiPaths.AUTH;
@@ -21,6 +23,7 @@ import static ru.nsu.crpo.auth.service.api.ApiPaths.LOGIN;
 import static ru.nsu.crpo.auth.service.api.ApiPaths.LOGOUT;
 import static ru.nsu.crpo.auth.service.api.ApiPaths.LOGOUT_ALL;
 import static ru.nsu.crpo.auth.service.api.ApiPaths.MANAGER;
+import static ru.nsu.crpo.auth.service.api.ApiPaths.SIGN_IN;
 
 @RequiredArgsConstructor
 @RestController
@@ -28,6 +31,12 @@ import static ru.nsu.crpo.auth.service.api.ApiPaths.MANAGER;
 public class AuthController implements AuthControllerSpec {
 
     private final AuthService authService;
+
+    @PostMapping(SIGN_IN)
+    public ResponseEntity<SignInResponse> signIn(@RequestBody @Valid SignInRequest signInRequest) {
+        var signInResponse = authService.signIn(signInRequest);
+        return ResponseEntity.ok(signInResponse);
+    }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping(CREATE + MANAGER)

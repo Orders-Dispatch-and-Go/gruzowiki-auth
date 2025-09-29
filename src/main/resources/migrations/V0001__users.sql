@@ -3,6 +3,12 @@ create table users (
     email varchar(100) unique,
     password varchar(512),
     first_name varchar(100),
+    second_name varchar(100),
+    third_name varchar(100),
+    phone int unique,
+    birthdate date,
+    passport_series int,
+    passport_number int,
     created_at timestamp without time zone
 );
 
@@ -11,7 +17,9 @@ create table roles (
     name varchar(15) unique
 );
 insert into roles (name) values ('ROLE_ADMIN'),
-                                ('ROLE_MANAGER');
+                                ('ROLE_MANAGER'),
+                                ('ROLE_CONSIGNER'),
+                                ('ROLE_CARRIER');
 
 create table user_role (
     user_id int references users(id),

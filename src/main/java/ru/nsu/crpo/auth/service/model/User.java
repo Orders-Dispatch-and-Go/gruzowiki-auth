@@ -17,11 +17,13 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.Instant;
+import java.time.LocalDate;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
@@ -45,6 +47,23 @@ public class User implements UserDetails {
 
     @Column(name = "first_name")
     private String firstName;
+
+    @Column(name = "second_name")
+    private String secondName;
+
+    @Column(name = "third_name")
+    private String thirdName;
+
+    private int phone;
+
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+    private LocalDate birthdate;
+
+    @Column(name = "passport_series")
+    private int passportSeries;
+
+    @Column(name = "passport_number")
+    private int passportNumber;
 
     @CreationTimestamp
     @Column(name = "created_at")

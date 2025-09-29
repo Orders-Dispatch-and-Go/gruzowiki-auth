@@ -4,6 +4,7 @@ import lombok.Builder;
 import lombok.Data;
 
 import java.time.Instant;
+import java.time.LocalDate;
 import java.util.Set;
 
 @Data
@@ -17,6 +18,14 @@ public class UserResponse {
     private Set<Integer> rolesId;
 
     private String firstName;
+
+    private String secondName;
+
+    private String thirdName;
+
+    private String phone;
+
+    private LocalDate birthdate;
 
     private Instant createdAt;
 }

@@ -27,6 +27,7 @@ import ru.nsu.crpo.auth.service.core.security.service.AuthService;
 
 import static ru.nsu.crpo.auth.service.api.ApiPaths.AUTH;
 import static ru.nsu.crpo.auth.service.api.ApiPaths.LOGIN;
+import static ru.nsu.crpo.auth.service.api.ApiPaths.SIGN_IN;
 import static ru.nsu.crpo.auth.service.util.SecurityUtil.ADMIN_ROLE;
 import static ru.nsu.crpo.auth.service.util.SecurityUtil.MANAGER_ROLE;
 
@@ -74,6 +75,7 @@ public class AuthConfig {
                                 .requestMatchers(HttpMethod.GET, "/swagger-ui/**").permitAll()
                                 .requestMatchers(HttpMethod.GET, "/v3/api-docs/**").permitAll()
 
+                                .requestMatchers(HttpMethod.POST, AUTH + SIGN_IN).permitAll()
                                 .requestMatchers(HttpMethod.POST, AUTH + LOGIN).permitAll()
 
                                 .anyRequest().authenticated()

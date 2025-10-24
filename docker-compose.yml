@@ -10,6 +10,7 @@ services:
       POSTGRES_DB: ${AUTH_PG_DATABASE}
     ports:
       - "${AUTH_PG_PORT}:5432"
+    restart: unless-stopped
     networks:
       - gruzowiki_network
 
@@ -51,6 +52,7 @@ services:
       - ./src/main/resources/keys/private:/keys/private
     depends_on:
       - auth_db_postgres
+    restart: unless-stopped
     networks:
       - gruzowiki_network
 

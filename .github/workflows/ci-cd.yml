@@ -8,7 +8,7 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository_owner }}/gruzowiki-auth
+  IMAGE_NAME: orders-dispatch-and-go/gruzowiki-auth
 
 jobs:
   test:

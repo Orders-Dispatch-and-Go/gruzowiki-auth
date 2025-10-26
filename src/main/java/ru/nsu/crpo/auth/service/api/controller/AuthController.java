@@ -38,12 +38,12 @@ public class AuthController implements AuthControllerSpec {
         return ResponseEntity.ok(signInResponse);
     }
 
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @PostMapping(CREATE + MANAGER)
-    public ResponseEntity<CreateUserResponse> createUser(@RequestBody @Valid CreateUserRequest createUserRequest) {
-        var createUserResponse = authService.createUser(createUserRequest);
-        return ResponseEntity.ok(createUserResponse);
-    }
+//    @PreAuthorize("hasRole('ROLE_ADMIN')")
+//    @PostMapping(CREATE + MANAGER)
+//    public ResponseEntity<CreateUserResponse> createUser(@RequestBody @Valid CreateUserRequest createUserRequest) {
+//        var createUserResponse = authService.createUser(createUserRequest);
+//        return ResponseEntity.ok(createUserResponse);
+//    }
 
     @PostMapping(LOGIN)
     public ResponseEntity<LoginResponse> login(@RequestBody @Valid LoginRequest loginRequest) {

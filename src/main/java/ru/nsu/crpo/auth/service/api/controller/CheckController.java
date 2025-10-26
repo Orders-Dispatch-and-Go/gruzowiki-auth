@@ -23,7 +23,7 @@ import static ru.nsu.crpo.auth.service.api.ApiPaths.TOKEN;
 @RequestMapping(CHECK)
 public class CheckController implements CheckControllerSpec {
 
-    private final EmailService emailService;
+//    private final EmailService emailService;
 
     @GetMapping(TOKEN)
     public ResponseEntity<Void> tokenIsValid() {
@@ -32,7 +32,7 @@ public class CheckController implements CheckControllerSpec {
 
     @PostMapping(EMAIL)
     public ResponseEntity<Boolean> emailAddressIsExist(@RequestBody @Valid @NotBlank @Email String email) {
-        emailService.emailAddressIsExist(email);
-        return new ResponseEntity<>(HttpStatus.OK);
+//        emailService.emailAddressIsExist(email);
+        return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }

@@ -54,7 +54,7 @@ public class User implements UserDetails {
     @Column(name = "third_name")
     private String thirdName;
 
-    private int phone;
+    private String phone;
 
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     private LocalDate birthdate;

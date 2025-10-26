@@ -35,14 +35,14 @@ public class SignInRequest {
     private String firstName;
 
     @Schema(
-            example = "name1"
+            example = "secondName1"
     )
     @NotBlank
     @Size(min = 5, max = 100)
     private String secondName;
 
     @Schema(
-            example = "name1"
+            example = "thirdName1"
     )
     @NotBlank
     @Size(min = 5, max = 100)

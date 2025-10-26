@@ -11,8 +11,8 @@ import static ru.nsu.crpo.auth.service.util.MessageKeys.SWAGGER_SECURITY_SCHEME_
 
 public interface AuthControllerSpec {
 
-    @SecurityRequirement(name = SWAGGER_SECURITY_SCHEME_NAME)
-    ResponseEntity<CreateUserResponse> createUser(@RequestBody @Valid CreateUserRequest createUserRequest);
+//    @SecurityRequirement(name = SWAGGER_SECURITY_SCHEME_NAME)
+//    ResponseEntity<CreateUserResponse> createUser(@RequestBody @Valid CreateUserRequest createUserRequest);
 
     @SecurityRequirement(name = SWAGGER_SECURITY_SCHEME_NAME)
     ResponseEntity<Void> logout();

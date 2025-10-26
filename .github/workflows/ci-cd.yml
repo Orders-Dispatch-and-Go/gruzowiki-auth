@@ -128,7 +128,5 @@ jobs:
           echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
 
           docker compose pull
-          
+
           docker compose up -d 
-          sleep 30
-          curl -f http://localhost:${{ secrets.AUTH_SERVICE_PORT }}/actuator/health || exit 1

@@ -2,22 +2,22 @@ package ru.nsu.crpo.auth.service.core.security.service;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import ru.nsu.crpo.auth.service.api.dto.auth.login.LoginRequest;
-import ru.nsu.crpo.auth.service.api.dto.auth.login.LoginResponse;
+import ru.nsu.crpo.auth.service.api.dto.auth.login.SignInRequest;
+import ru.nsu.crpo.auth.service.api.dto.auth.login.SignInResponse;
 import ru.nsu.crpo.auth.service.api.dto.auth.signin.CreateUserRequest;
 import ru.nsu.crpo.auth.service.api.dto.auth.signin.CreateUserResponse;
-import ru.nsu.crpo.auth.service.api.dto.auth.signin.SignInRequest;
-import ru.nsu.crpo.auth.service.api.dto.auth.signin.SignInResponse;
+import ru.nsu.crpo.auth.service.api.dto.auth.signin.SignUpRequest;
+import ru.nsu.crpo.auth.service.api.dto.auth.signin.SignUpResponse;
 
 public interface AuthService {
 
     boolean setAuthentication(HttpServletRequest request, HttpServletResponse response);
 
-    SignInResponse signIn(SignInRequest signInRequest);
+    SignUpResponse signUp(SignUpRequest signUpRequest);
 
     CreateUserResponse createUser(CreateUserRequest createUserRequest);
 
-    LoginResponse login(LoginRequest loginRequest);
+    SignInResponse signIn(SignInRequest signInRequest);
 
     void logout();
 

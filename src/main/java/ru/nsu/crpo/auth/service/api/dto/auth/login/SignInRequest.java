@@ -8,7 +8,7 @@ import lombok.Data;
 
 @Data
 @Builder
-public class LoginRequest {
+public class SignInRequest {
 
     @Schema(example = "gmail1@gmail.com")
     @NotNull

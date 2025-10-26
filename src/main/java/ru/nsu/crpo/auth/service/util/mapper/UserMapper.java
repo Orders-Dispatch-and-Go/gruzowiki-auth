@@ -5,8 +5,8 @@ import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
 import org.mapstruct.ReportingPolicy;
 import ru.nsu.crpo.auth.service.api.dto.auth.signin.CreateUserRequest;
-import ru.nsu.crpo.auth.service.api.dto.auth.signin.SignInRequest;
-import ru.nsu.crpo.auth.service.api.dto.auth.signin.SignInResponse;
+import ru.nsu.crpo.auth.service.api.dto.auth.signin.SignUpRequest;
+import ru.nsu.crpo.auth.service.api.dto.auth.signin.SignUpResponse;
 import ru.nsu.crpo.auth.service.api.dto.user.UserResponse;
 import ru.nsu.crpo.auth.service.model.User;
 
@@ -21,11 +21,11 @@ import static ru.nsu.crpo.auth.service.util.mapper.MapperUtil.MAPPER_UTIL_NAME;
 )
 public interface UserMapper {
 
-    User toUser(SignInRequest signInRequest);
+    User toUser(SignUpRequest signUpRequest);
 
     User toUser(CreateUserRequest createUserRequest);
 
-    SignInResponse toSignInUserResponse(User user);
+    SignUpResponse toSignInUserResponse(User user);
 
     @Mapping(
             target = "rolesId",

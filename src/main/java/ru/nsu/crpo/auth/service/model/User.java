@@ -59,11 +59,11 @@ public class User implements UserDetails {
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     private LocalDate birthdate;
 
-    @Column(name = "passport_series")
-    private int passportSeries;
-
-    @Column(name = "passport_number")
-    private int passportNumber;
+//    @Column(name = "passport_series")
+//    private int passportSeries;
+//
+//    @Column(name = "passport_number")
+//    private int passportNumber;
 
     @CreationTimestamp
     @Column(name = "created_at")

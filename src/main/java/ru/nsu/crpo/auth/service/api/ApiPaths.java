@@ -6,11 +6,9 @@ public final class ApiPaths {
 
     public static final String AUTH = "/auth";
 
+    public static final String SIGN_UP = "/sign_up";
+
     public static final String SIGN_IN = "/sign_in";
-
-    public static final String LOGIN = "/login";
-
-    public static final String LOGOUT = "/logout";
 
     public static final String LOGOUT_ALL = "/logout_all";
 

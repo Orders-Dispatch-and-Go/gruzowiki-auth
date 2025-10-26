@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Data
 @Builder
-public class SignInResponse {
+public class SignUpResponse {
 
     private int id;
 }

@@ -1,11 +1,7 @@
 package ru.nsu.crpo.auth.service.api.controller.spec;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestBody;
-import ru.nsu.crpo.auth.service.api.dto.auth.signin.CreateUserRequest;
-import ru.nsu.crpo.auth.service.api.dto.auth.signin.CreateUserResponse;
 
 import static ru.nsu.crpo.auth.service.util.MessageKeys.SWAGGER_SECURITY_SCHEME_NAME;
 

@@ -16,12 +16,12 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.stereotype.Service;
-import ru.nsu.crpo.auth.service.api.dto.auth.login.LoginRequest;
-import ru.nsu.crpo.auth.service.api.dto.auth.login.LoginResponse;
+import ru.nsu.crpo.auth.service.api.dto.auth.login.SignInRequest;
+import ru.nsu.crpo.auth.service.api.dto.auth.login.SignInResponse;
 import ru.nsu.crpo.auth.service.api.dto.auth.signin.CreateUserRequest;
 import ru.nsu.crpo.auth.service.api.dto.auth.signin.CreateUserResponse;
-import ru.nsu.crpo.auth.service.api.dto.auth.signin.SignInRequest;
-import ru.nsu.crpo.auth.service.api.dto.auth.signin.SignInResponse;
+import ru.nsu.crpo.auth.service.api.dto.auth.signin.SignUpRequest;
+import ru.nsu.crpo.auth.service.api.dto.auth.signin.SignUpResponse;
 import ru.nsu.crpo.auth.service.api.exception.ServiceException;
 import ru.nsu.crpo.auth.service.configuration.security.tokenConfig.TokenConfig;
 import ru.nsu.crpo.auth.service.core.security.object.JwtToken;
@@ -29,7 +29,6 @@ import ru.nsu.crpo.auth.service.core.security.object.UserClaim;
 import ru.nsu.crpo.auth.service.core.security.object.UserSessionDetails;
 import ru.nsu.crpo.auth.service.core.security.service.AuthService;
 import ru.nsu.crpo.auth.service.core.security.service.TokenCryptoService;
-import ru.nsu.crpo.auth.service.core.service.EmailService;
 import ru.nsu.crpo.auth.service.core.service.PasswordService;
 import ru.nsu.crpo.auth.service.core.service.RoleService;
 import ru.nsu.crpo.auth.service.core.service.TokenService;
@@ -46,7 +45,6 @@ import static ru.nsu.crpo.auth.service.api.exception.ErrorCode.UNAUTHORIZED;
 import static ru.nsu.crpo.auth.service.util.SecurityUtil.AUTHORITIES_CLAIM;
 import static ru.nsu.crpo.auth.service.util.SecurityUtil.MANAGER_ROLE;
 import static ru.nsu.crpo.auth.service.util.SecurityUtil.USER_CLAIM;
-import static ru.nsu.crpo.auth.service.util.SecurityUtil.USER_ROLE;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -116,11 +114,11 @@ public class DefaultAuthService implements AuthService {
     }
 
     @Override
-    public SignInResponse signIn(SignInRequest signInRequest) {
+    public SignUpResponse signUp(SignUpRequest signUpRequest) {
 //        emailService.emailAddressIsExist(signInRequest.getEmail());
-        User user = userMapper.toUser(signInRequest);
-        user.setPassword(passwordService.encodePassword(signInRequest.getPassword()));
-        user.setRoles(Set.of(roleService.getRole(USER_ROLE)));
+        User user = userMapper.toUser(signUpRequest);
+        user.setPassword(passwordService.encodePassword(signUpRequest.getPassword()));
+        user.setRoles(Set.of(roleService.getRole(signUpRequest.getRole())));
         user = userService.saveUser(user);
         return userMapper.toSignInUserResponse(user);
     }
@@ -143,9 +141,9 @@ public class DefaultAuthService implements AuthService {
 
     @Transactional
     @Override
-    public LoginResponse login(LoginRequest loginRequest) {
+    public SignInResponse signIn(SignInRequest signInRequest) {
         UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
-                new UsernamePasswordAuthenticationToken(loginRequest.getLogin(), loginRequest.getPassword());
+                new UsernamePasswordAuthenticationToken(signInRequest.getLogin(), signInRequest.getPassword());
 
         Authentication authentication;
         try {
@@ -161,7 +159,7 @@ public class DefaultAuthService implements AuthService {
         String accessToken = tokenCryptoService.createToken(claims, jwsSigner);
         accessTokenService.saveToken(accessToken, user);
 
-        return LoginResponse.builder()
+        return SignInResponse.builder()
                 .accessToken(accessToken)
                 .build();
     }

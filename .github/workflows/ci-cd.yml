@@ -98,10 +98,9 @@ jobs:
         username: ${{ secrets.DEPLOY_USER }}
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         script: |
-          # Create directory if it doesn't exist
           mkdir -p /home/${{ secrets.DEPLOY_USER }}/gruzowiki-auth
           cd /home/${{ secrets.DEPLOY_USER }}/gruzowiki-auth
-          cp /home/runner/work/${{ github.repository }}/${{ github.repository }}/docker-compose.yml ./docker-compose.yml
+          cp /home/runner/work/gruzowiki-auth/gruzowiki-auth/docker-compose.yml ./docker-compose.yml
           
           sed -i 's|build:|# build:|g' docker-compose.yml
           sed -i 's|dockerfile: Dockerfile|# dockerfile: Dockerfile|g' docker-compose.yml
@@ -117,11 +116,11 @@ jobs:
           EOF
           
           mkdir -p migrations/auth
-          cp -r /home/runner/work/${{ github.repository }}/${{ github.repository }}/src/main/resources/migrations/* migrations/auth/
+          cp -r /home/runner/work/gruzowiki-auth/gruzowiki-auth/src/main/resources/migrations/* migrations/auth/
           
           mkdir -p src/main/resources/keys/public
           mkdir -p src/main/resources/keys/private
-          cp -r /home/runner/work/${{ github.repository }}/${{ github.repository }}/src/main/resources/keys/* src/main/resources/keys/
+          cp -r /home/runner/work/gruzowiki-auth/gruzowiki-auth/src/main/resources/keys/* src/main/resources/keys/
           
           docker network create gruzowiki-network 2>/dev/null || true
 

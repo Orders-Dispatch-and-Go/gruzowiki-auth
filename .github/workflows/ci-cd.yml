@@ -123,37 +123,12 @@ jobs:
           AUTH_SERVICE_PORT=${{ secrets.AUTH_SERVICE_PORT }}
           EOF
           
-          # Files are already copied via SCP action
-          
-          # Create network if it doesn't exist
           docker network create gruzowiki-network 2>/dev/null || true
 
-          # Login to registry
           echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
-  
-          # Pull latest images
+
           docker compose pull
           
-          # Start PostgreSQL first
-          docker compose up -d auth_db_postgres
-          sleep 10
-          
-          # Run migrations if migrations directory exists
-          if [ -d "src/main/resources/migrations" ]; then
-            docker run --rm \
-              --network=gruzowiki-network \
-              -v $(pwd)/src/main/resources/migrations:/flyway/sql \
-              flyway/flyway:11.4 \
-              -url=jdbc:postgresql://auth_db_postgres:5432/${{ secrets.AUTH_PG_DATABASE }} \
-              -user=${{ secrets.AUTH_PG_USER }} \
-              -password=${{ secrets.AUTH_PG_PASSWORD }} \
-              -cleanDisabled=true \
-              -baselineOnMigrate=true \
-              -baselineVersion=1 \
-              migrate
-          fi
-          
-          # Start auth service
-          docker compose up -d auth_service
+          docker compose up -d 
           sleep 30
           curl -f http://localhost:${{ secrets.AUTH_SERVICE_PORT }}/actuator/health || exit 1

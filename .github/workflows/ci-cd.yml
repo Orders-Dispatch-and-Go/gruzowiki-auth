@@ -1,0 +1,175 @@
+name: My CI/CD
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16.4
+        env:
+          POSTGRES_USER: test_user
+          POSTGRES_PASSWORD: test_password
+          POSTGRES_DB: test_auth_db
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up JDK 17
+      uses: actions/setup-java@v4
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+
+    - name: Cache Gradle packages
+      uses: actions/cache@v4
+      with:
+        path: |
+          ~/.gradle/caches
+          ~/.gradle/wrapper
+        key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+        restore-keys: |
+          ${{ runner.os }}-gradle-
+
+    - name: Create test environment file
+      run: |
+        cat > .env << EOF
+        AUTH_PG_HOST=localhost
+        AUTH_PG_PORT=5432
+        AUTH_PG_DATABASE=test_auth_db
+        AUTH_PG_USER=test_user
+        AUTH_PG_PASSWORD=test_password
+        AUTH_SERVICE_PORT=8080
+        EOF
+
+    - name: Run tests
+      run: ./gradlew test
+      env:
+        AUTH_PG_HOST: localhost
+        AUTH_PG_PORT: 5432
+        AUTH_PG_DATABASE: test_auth_db
+        AUTH_PG_USER: test_user
+        AUTH_PG_PASSWORD: test_password
+
+  build:
+    runs-on: ubuntu-latest
+    needs: test
+    if: github.event_name == 'push'
+    
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up JDK 17
+      uses: actions/setup-java@v4
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+
+    - name: Cache Gradle packages
+      uses: actions/cache@v4
+      with:
+        path: |
+          ~/.gradle/caches
+          ~/.gradle/wrapper
+        key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+        restore-keys: |
+          ${{ runner.os }}-gradle-
+
+    - name: Create environment file
+      run: |
+        cat > .env << EOF
+        AUTH_PG_HOST=${{ secrets.AUTH_PG_HOST }}
+        AUTH_PG_PORT=${{ secrets.AUTH_PG_PORT }}
+        AUTH_PG_DATABASE=${{ secrets.AUTH_PG_DATABASE }}
+        AUTH_PG_USER=${{ secrets.AUTH_PG_USER }}
+        AUTH_PG_PASSWORD=${{ secrets.AUTH_PG_PASSWORD }}
+        AUTH_SERVICE_PORT=${{ secrets.AUTH_SERVICE_PORT }}
+        EOF
+
+    - name: Build application
+      run: ./gradlew build -x test
+
+    - name: Log in to Container Registry
+      uses: docker/login-action@v3
+      with:
+        registry: ${{ env.REGISTRY }}
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Extract metadata
+      id: meta
+      uses: docker/metadata-action@v5
+      with:
+        images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+        tags: |
+          type=ref,event=branch
+          type=ref,event=pr
+          type=sha,prefix={{branch}}-
+          type=raw,value=latest,enable={{is_default_branch}}
+
+    - name: Build and push Docker image
+      uses: docker/build-push-action@v5
+      with:
+        context: .
+        push: true
+        tags: ${{ steps.meta.outputs.tags }}
+        labels: ${{ steps.meta.outputs.labels }}
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    if: github.ref == 'refs/heads/develop'
+    environment: produclion
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Deploy to prod server
+      uses: appleboy/ssh-action@v1.0.3
+      with:
+        host: ${{ secrets.DEPLOY_HOST }}
+        username: ${{ secrets.DEPLOY_USER }}
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        script: |
+          cd /opt/sopd/dev
+          echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+          docker compose pull auth_service
+          if [ -d "migrations/auth" ]; then
+            docker run --rm \
+              --network=gruzowiki-network \
+              -v /opt/sopd/dev/migrations/auth:/flyway/sql \
+              flyway/flyway:11.4 \
+              -url=jdbc:postgresql://auth_db_postgres:5432/${{ secrets.AUTH_PG_DATABASE }} \
+              -user=${{ secrets.AUTH_PG_USER }} \
+              -password=${{ secrets.AUTH_PG_PASSWORD }} \
+              -cleanDisabled=true \
+              -baselineOnMigrate=true \
+              -baselineVersion=1 \
+              migrate
+          fi
+          docker compose up -d auth_service
+          sleep 30
+          curl -f http://localhost:${{ secrets.AUTH_SERVICE_PORT }}/actuator/health || exit 1

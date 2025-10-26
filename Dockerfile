@@ -12,5 +12,5 @@ RUN gradle build
 
 FROM openjdk:17
 
-COPY --from=build /auth-service/build/libs/auth-service-0.0.1-SNAPSHOT.jar .
-ENTRYPOINT ["java", "-jar", "auth-service-0.0.1-SNAPSHOT.jar", "--server.port=8080"]
+COPY --from=build /auth-service/build/libs/*.jar app.jar
+ENTRYPOINT ["java", "-jar", "app.jar", "--server.port=8080"]

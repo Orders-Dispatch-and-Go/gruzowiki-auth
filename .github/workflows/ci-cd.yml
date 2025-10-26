@@ -8,7 +8,7 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}
+  IMAGE_NAME: ${{ github.repository_owner }}/gruzowiki-auth
 
 jobs:
   test:
@@ -125,16 +125,24 @@ jobs:
           
           # Files are already copied via SCP action
           
+          # Create network if it doesn't exist
           docker network create gruzowiki-network 2>/dev/null || true
 
+          # Login to registry
           echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
   
-          docker compose pull auth_service
+          # Pull latest images
+          docker compose pull
           
-          if [ -d "migrations/auth" ]; then
+          # Start PostgreSQL first
+          docker compose up -d auth_db_postgres
+          sleep 10
+          
+          # Run migrations if migrations directory exists
+          if [ -d "src/main/resources/migrations" ]; then
             docker run --rm \
               --network=gruzowiki-network \
-              -v /opt/sopd/dev/migrations/auth:/flyway/sql \
+              -v $(pwd)/src/main/resources/migrations:/flyway/sql \
               flyway/flyway:11.4 \
               -url=jdbc:postgresql://auth_db_postgres:5432/${{ secrets.AUTH_PG_DATABASE }} \
               -user=${{ secrets.AUTH_PG_USER }} \
@@ -145,6 +153,7 @@ jobs:
               migrate
           fi
           
+          # Start auth service
           docker compose up -d auth_service
           sleep 30
           curl -f http://localhost:${{ secrets.AUTH_SERVICE_PORT }}/actuator/health || exit 1

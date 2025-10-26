@@ -44,7 +44,7 @@ public class UserServiceImpl implements UserService {
             return userRepository.save(user);
         } catch (DataIntegrityViolationException ex) {
             if (DatabaseUtil.isUniqueConstraintException(ex)) {
-                throw new ServiceException(ALREADY_EXIST, "user", "email");
+                throw new ServiceException(ALREADY_EXIST, "user", "email or phone");
             }
             throw new ServiceException(INTERNAL_SERVER_ERROR, ex);
         }

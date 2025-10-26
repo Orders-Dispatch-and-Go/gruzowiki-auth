@@ -20,7 +20,7 @@ import java.util.Hashtable;
 import static ru.nsu.crpo.auth.service.api.exception.ErrorCode.ILLEGAL_VALUE;
 import static ru.nsu.crpo.auth.service.api.exception.ErrorCode.INTERNAL_SERVER_ERROR;
 
-@Service
+//@Service
 public class EmailServiceImpl implements EmailService {
 
     @Override

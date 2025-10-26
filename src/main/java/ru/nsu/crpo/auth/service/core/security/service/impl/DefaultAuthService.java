@@ -71,7 +71,7 @@ public class DefaultAuthService implements AuthService {
 
     private final JWSSigner jwsSigner;
 
-    private final EmailService emailService;
+//    private final EmailService emailService;
 
     @Override
     public boolean setAuthentication(HttpServletRequest request, HttpServletResponse response) {
@@ -117,7 +117,7 @@ public class DefaultAuthService implements AuthService {
 
     @Override
     public SignInResponse signIn(SignInRequest signInRequest) {
-        emailService.emailAddressIsExist(signInRequest.getEmail());
+//        emailService.emailAddressIsExist(signInRequest.getEmail());
         User user = userMapper.toUser(signInRequest);
         user.setPassword(passwordService.encodePassword(signInRequest.getPassword()));
         user.setRoles(Set.of(roleService.getRole(USER_ROLE)));
@@ -128,7 +128,7 @@ public class DefaultAuthService implements AuthService {
     @Transactional
     @Override
     public CreateUserResponse createUser(CreateUserRequest createUserRequest) {
-        emailService.emailAddressIsExist(createUserRequest.getEmail());
+//        emailService.emailAddressIsExist(createUserRequest.getEmail());
         User user = userMapper.toUser(createUserRequest);
         String password = passwordService.generateRandomPassword();
         user.setPassword(passwordService.encodePassword(password));

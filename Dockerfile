@@ -8,7 +8,7 @@ COPY settings.gradle .
 RUN gradle dependencies
 
 COPY src src
-RUN gradle test --info
+RUN gradle test
 
 FROM gradle:8.6.0-jdk17 AS build
 

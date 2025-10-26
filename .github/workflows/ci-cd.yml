@@ -98,9 +98,37 @@ jobs:
         username: ${{ secrets.DEPLOY_USER }}
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         script: |
-          cd /opt/sopd/dev
+          # Create directory if it doesn't exist
+          mkdir -p /home/${{ secrets.DEPLOY_USER }}/gruzowiki-auth
+          cd /home/${{ secrets.DEPLOY_USER }}/gruzowiki-auth
+          cp /home/runner/work/${{ github.repository }}/${{ github.repository }}/docker-compose.yml ./docker-compose.yml
+          
+          sed -i 's|build:|# build:|g' docker-compose.yml
+          sed -i 's|dockerfile: Dockerfile|# dockerfile: Dockerfile|g' docker-compose.yml
+          sed -i '/auth_service:/a\    image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest' docker-compose.yml
+
+          cat > .env << EOF
+          AUTH_PG_HOST=auth_db_postgres
+          AUTH_PG_PORT=5432
+          AUTH_PG_DATABASE=${{ secrets.AUTH_PG_DATABASE }}
+          AUTH_PG_USER=${{ secrets.AUTH_PG_USER }}
+          AUTH_PG_PASSWORD=${{ secrets.AUTH_PG_PASSWORD }}
+          AUTH_SERVICE_PORT=${{ secrets.AUTH_SERVICE_PORT }}
+          EOF
+          
+          mkdir -p migrations/auth
+          cp -r /home/runner/work/${{ github.repository }}/${{ github.repository }}/src/main/resources/migrations/* migrations/auth/
+          
+          mkdir -p src/main/resources/keys/public
+          mkdir -p src/main/resources/keys/private
+          cp -r /home/runner/work/${{ github.repository }}/${{ github.repository }}/src/main/resources/keys/* src/main/resources/keys/
+          
+          docker network create gruzowiki-network 2>/dev/null || true
+
           echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+  
           docker compose pull auth_service
+          
           if [ -d "migrations/auth" ]; then
             docker run --rm \
               --network=gruzowiki-network \
@@ -114,6 +142,7 @@ jobs:
               -baselineVersion=1 \
               migrate
           fi
+          
           docker compose up -d auth_service
           sleep 30
           curl -f http://localhost:${{ secrets.AUTH_SERVICE_PORT }}/actuator/health || exit 1

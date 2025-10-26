@@ -11,7 +11,7 @@ services:
     ports:
       - "${AUTH_PG_PORT}:5432"
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - postgres_data_auth:/var/lib/postgresql/data
     restart: unless-stopped
     networks:
       - gruzowiki_network
@@ -59,7 +59,7 @@ services:
       - gruzowiki_network
 
 volumes:
-  postgres_data:
+  postgres_data_auth:
 
 networks:
   gruzowiki_network:

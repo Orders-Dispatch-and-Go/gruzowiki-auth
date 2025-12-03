@@ -32,17 +32,14 @@ import static ru.nsu.crpo.auth.service.api.exception.ErrorCode.INTERNAL_SERVER_E
 public final class SecurityUtil {
 
     public static final String ISSUED_AT_CLAIM = "issuedAt";
-
     public static final String EXPIRES_AT_CLAIM = "expiresAt";
-
     public static final String AUTHORITIES_CLAIM = "userAuthorities";
-
     public static final String USER_CLAIM = "userData";
 
+    public static final String CONSIGNER_ROLE = "ROLE_CONSIGNER";
+    public static final String CARRIER_ROLE = "ROLE_CARRIER";
     public static final String USER_ROLE = "ROLE_USER";
-
     public static final String MANAGER_ROLE = "ROLE_MANAGER";
-
     public static final String ADMIN_ROLE = "ROLE_ADMIN";
 
     private static final Gson gson = new Gson();

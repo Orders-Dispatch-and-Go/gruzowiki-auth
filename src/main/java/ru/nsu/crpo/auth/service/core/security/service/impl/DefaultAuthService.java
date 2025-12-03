@@ -24,6 +24,9 @@ import ru.nsu.crpo.auth.service.api.dto.auth.signin.SignUpRequest;
 import ru.nsu.crpo.auth.service.api.dto.auth.signin.SignUpResponse;
 import ru.nsu.crpo.auth.service.api.exception.ServiceException;
 import ru.nsu.crpo.auth.service.configuration.security.tokenConfig.TokenConfig;
+import ru.nsu.crpo.auth.service.core.feing.transportation.TransportationFeignClient;
+import ru.nsu.crpo.auth.service.core.feing.transportation.dto.PostCarrierRequest;
+import ru.nsu.crpo.auth.service.core.feing.transportation.dto.PostConsignerRequest;
 import ru.nsu.crpo.auth.service.core.security.object.JwtToken;
 import ru.nsu.crpo.auth.service.core.security.object.UserClaim;
 import ru.nsu.crpo.auth.service.core.security.object.UserSessionDetails;
@@ -43,6 +46,8 @@ import java.util.Set;
 import static ru.nsu.crpo.auth.service.api.exception.ErrorCode.EXPIRED;
 import static ru.nsu.crpo.auth.service.api.exception.ErrorCode.UNAUTHORIZED;
 import static ru.nsu.crpo.auth.service.util.SecurityUtil.AUTHORITIES_CLAIM;
+import static ru.nsu.crpo.auth.service.util.SecurityUtil.CARRIER_ROLE;
+import static ru.nsu.crpo.auth.service.util.SecurityUtil.CONSIGNER_ROLE;
 import static ru.nsu.crpo.auth.service.util.SecurityUtil.MANAGER_ROLE;
 import static ru.nsu.crpo.auth.service.util.SecurityUtil.USER_CLAIM;
 
@@ -68,6 +73,8 @@ public class DefaultAuthService implements AuthService {
     private final TokenConfig tokenConfig;
 
     private final JWSSigner jwsSigner;
+
+    private final TransportationFeignClient transportationFeignClient;
 
 //    private final EmailService emailService;
 
@@ -113,13 +120,21 @@ public class DefaultAuthService implements AuthService {
         }
     }
 
+    @Transactional
     @Override
     public SignUpResponse signUp(SignUpRequest signUpRequest) {
 //        emailService.emailAddressIsExist(signInRequest.getEmail());
         User user = userMapper.toUser(signUpRequest);
         user.setPassword(passwordService.encodePassword(signUpRequest.getPassword()));
         user.setRoles(Set.of(roleService.getRole(signUpRequest.getRole())));
+
         user = userService.saveUser(user);
+
+        switch (signUpRequest.getRole()) {
+            case CONSIGNER_ROLE -> transportationFeignClient.createConsigner(new PostConsignerRequest(user.getId()));
+            case CARRIER_ROLE -> transportationFeignClient.createCarrier(new PostCarrierRequest(user.getId(), "category1"));
+        }
+
         return userMapper.toSignInUserResponse(user);
     }
 

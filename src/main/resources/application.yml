@@ -1,5 +1,5 @@
 server:
-  port: ${AUTH_SERVICE_PORT}
+  port: ${AUTH_SERVICE_PORT:8074}
 
 spring:
   application:
@@ -8,9 +8,9 @@ spring:
     import: optional:file:.env[.properties]
 
   datasource:
-    url: jdbc:postgresql://${AUTH_PG_HOST}:${AUTH_PG_PORT}/${AUTH_PG_DATABASE}
-    username: ${AUTH_PG_USER}
-    password: ${AUTH_PG_PASSWORD}
+    url: jdbc:postgresql://${AUTH_PG_HOST:localhost}:${AUTH_PG_PORT:5432}/${AUTH_PG_DATABASE:postgres}
+    username: ${AUTH_PG_USER:postgres}
+    password: ${AUTH_PG_PASSWORD:postgres}
     driver-class-name: org.postgresql.Driver
   jpa:
     show-sql: false
@@ -18,11 +18,20 @@ spring:
       hibernate:
         format_sql: true
 
+  cloud:
+    openfeign:
+      client:
+        config:
+          transportationServiceFeignClient:
+            connect-timeout: 5000
+            read-timeout: 5000
+            url: ${TRANSPORTATION_SERVICE_URL:http://localhost:8080}
+
 app:
   token:
     jws:
-      public-key-path: ${PUBLIC_KEY_FILE_PATH}
-      private-key-path: ${PRIVATE_KEY_FILE_PATH}
+      public-key-path: ${PUBLIC_KEY_FILE_PATH:/Users/improvemac/Documents/coding/java/gruzowiki/gruzowiki-auth/src/main/resources/keys/public/jws-public.pem}
+      private-key-path: ${PRIVATE_KEY_FILE_PATH:/Users/improvemac/Documents/coding/java/gruzowiki/gruzowiki-auth/src/main/resources/keys/private/jws-private.pem}
       duration: 30d
 
 logging:

@@ -4,7 +4,6 @@ import com.google.common.collect.ImmutableMap;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.MessageSource;
-import org.springframework.context.MessageSourceResolvable;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -65,8 +64,7 @@ public class ExceptionResolver {
 
     @ExceptionHandler
     public ResponseEntity<ErrorResponse> resolveHandleException(Exception ex) {
-        logging(ex);
-        ErrorInfo errorCode = resolveException(ex);
+        logging(ex);ErrorInfo errorCode = resolveException(ex);
         return ResponseEntity.status(httpStatusMap.get(errorCode.code))
                 .body(ErrorResponse.builder()
                         .errorCode(errorCode.code.getCode())
@@ -132,14 +130,15 @@ public class ExceptionResolver {
                     ))
                     .toList();
         } else if (ex instanceof HandlerMethodValidationException e) {
-            return e.getAllValidationResults().stream()
-                    .map(parameterValidationResult -> ParameterMessages.of(
-                            parameterValidationResult.getMethodParameter().getParameterName(),
-                            parameterValidationResult.getResolvableErrors().stream()
-                                    .map(MessageSourceResolvable::getDefaultMessage)
-                                    .toList()
-                    ))
-                    .toList();
+//            return e.getAllValidationResults().stream()
+//                    .map(parameterValidationResult -> ParameterMessages.of(
+//                            parameterValidationResult.getMethodParameter().getParameterName(),
+//                            parameterValidationResult.getResolvableErrors().stream()
+//                                    .map(MessageSourceResolvable::getDefaultMessage)
+//                                    .toList()
+//                    ))
+//                    .toList();
+            List.of();
         }
         return null;
     }

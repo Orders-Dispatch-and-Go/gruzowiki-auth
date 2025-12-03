@@ -2,16 +2,16 @@ services:
   auth_db_postgres:
     image: 'postgres:16.4'
     container_name: "auth-postgres"
-#    env_file:
-#      - .env
+    env_file:
+      - .env
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: postgres
     ports:
       - "5432:5432"
-#    volumes:
-#      - postgres_data_auth:/var/lib/postgresql/data
+    volumes:
+      - postgres_data_auth:/var/lib/postgresql/data
     restart: unless-stopped
     networks:
       - gruzowiki_network
@@ -19,8 +19,8 @@ services:
   auth_flyway:
     image: 'flyway/flyway:11.4'
     container_name: "auth-flyway"
-#    env_file:
-#      - .env
+    env_file:
+      - .env
     environment:
       FLYWAY_URL: jdbc:postgresql://auth_db_postgres:5432/postgres
       FLYWAY_USER: postgres
@@ -36,27 +36,27 @@ services:
     networks:
       - gruzowiki_network
 
-#  auth_service:
-#    build:
-#      dockerfile: Dockerfile
-#    container_name: "auth-service"
-#    env_file:
-#      - .env
-#    environment:
-#      AUTH_PG_HOST: auth_db_postgres
-#      AUTH_PG_PORT: 5432
-#      PUBLIC_KEY_FILE_PATH: keys/public/jws-public.pem
-#      PRIVATE_KEY_FILE_PATH: keys/private/jws-private.pem
-#    ports:
-#      - "${AUTH_SERVICE_PORT}:8080"
-#    volumes:
-#      - ./src/main/resources/keys/public:/keys/public
-#      - ./src/main/resources/keys/private:/keys/private
-#    depends_on:
-#      - auth_db_postgres
-#    restart: unless-stopped
-#    networks:
-#      - gruzowiki_network
+  auth_service:
+    build:
+      dockerfile: Dockerfile
+    container_name: "auth-service"
+    env_file:
+      - .env
+    environment:
+      AUTH_PG_HOST: auth_db_postgres
+      AUTH_PG_PORT: 5432
+      PUBLIC_KEY_FILE_PATH: keys/public/jws-public.pem
+      PRIVATE_KEY_FILE_PATH: keys/private/jws-private.pem
+    ports:
+      - "${AUTH_SERVICE_PORT}:8080"
+    volumes:
+      - ./src/main/resources/keys/public:/keys/public
+      - ./src/main/resources/keys/private:/keys/private
+    depends_on:
+      - auth_db_postgres
+    restart: unless-stopped
+    networks:
+      - gruzowiki_network
 
 volumes:
   postgres_data_auth:

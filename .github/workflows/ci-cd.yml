@@ -13,7 +13,7 @@ env:
 jobs:
   test:
     runs-on: ubuntu-latest
-    if: github.event_name == 'push' && contains(github.event.head_commit.modified, 'src/') || contains(github.event.head_commit.added, 'src/') || contains(github.event.head_commit.removed, 'src/')
+    if: github.event_name == 'push'
     
     steps:
     - name: Checkout code
@@ -36,7 +36,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     needs: test
-    if: github.event_name == 'push' && contains(github.event.head_commit.modified, 'src/') || contains(github.event.head_commit.added, 'src/') || contains(github.event.head_commit.removed, 'src/')
+    if: github.event_name == 'push'
     
     permissions:
       contents: read

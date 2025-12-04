@@ -28,7 +28,7 @@ jobs:
         AUTH_PG_USER=${{ secrets.AUTH_PG_USER }}
         AUTH_PG_PASSWORD=${{ secrets.AUTH_PG_PASSWORD }}
         AUTH_SERVICE_PORT=${{ secrets.AUTH_SERVICE_PORT }}
-        TRANSPORTATION_SERVICE_URL=${{secrets.TRANSPORTATION_SERVICE_URL}}
+        TRANSPORTATION_SERVICE_URL=${{ secrets.TRANSPORTATION_SERVICE_URL}}
         EOF
 
     - name: Run tests with Docker
@@ -56,6 +56,7 @@ jobs:
         AUTH_PG_USER=${{ secrets.AUTH_PG_USER }}
         AUTH_PG_PASSWORD=${{ secrets.AUTH_PG_PASSWORD }}
         AUTH_SERVICE_PORT=${{ secrets.AUTH_SERVICE_PORT }}
+        TRANSPORTATION_SERVICE_URL=${{ secrets.TRANSPORTATION_SERVICE_URL}}
         EOF
 
     - name: Log in to Container Registry
@@ -113,7 +114,6 @@ jobs:
           
           sed -i 's|build:|# build:|g' docker-compose.yml
           sed -i 's|dockerfile: Dockerfile|# dockerfile: Dockerfile|g' docker-compose.yml
-          sed -i '/auth_service:/a\    image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest' docker-compose.yml
 
           cat > .env << EOF
           AUTH_PG_HOST=auth_db_postgres
@@ -122,6 +122,7 @@ jobs:
           AUTH_PG_USER=${{ secrets.AUTH_PG_USER }}
           AUTH_PG_PASSWORD=${{ secrets.AUTH_PG_PASSWORD }}
           AUTH_SERVICE_PORT=${{ secrets.AUTH_SERVICE_PORT }}
+          TRANSPORTATION_SERVICE_URL=${{ secrets.TRANSPORTATION_SERVICE_URL}}
           EOF
           
           docker network create gruzowiki-network 2>/dev/null || true

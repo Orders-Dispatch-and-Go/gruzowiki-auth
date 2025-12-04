@@ -23,8 +23,8 @@ spring:
       client:
         config:
           transportationServiceFeignClient:
-            connect-timeout: 5000
-            read-timeout: 5000
+            connect-timeout: 60000
+            read-timeout: 60000
             url: ${TRANSPORTATION_SERVICE_URL:http://localhost:8080}
 
 app:

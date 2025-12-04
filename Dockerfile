@@ -22,7 +22,7 @@ RUN gradle dependencies
 COPY src src
 RUN gradle build -x test
 
-FROM openjdk:17
+FROM eclipse-temurin:17-jre
 
 COPY --from=build /auth-service/build/libs/*.jar app.jar
 ENTRYPOINT ["java", "-jar", "app.jar", "--server.port=8080"]

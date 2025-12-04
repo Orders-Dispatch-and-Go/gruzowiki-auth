@@ -28,6 +28,7 @@ jobs:
         AUTH_PG_USER=${{ secrets.AUTH_PG_USER }}
         AUTH_PG_PASSWORD=${{ secrets.AUTH_PG_PASSWORD }}
         AUTH_SERVICE_PORT=${{ secrets.AUTH_SERVICE_PORT }}
+        TRANSPORTATION_SERVICE_URL=${{secrets.TRANSPORTATION_SERVICE_URL}}
         EOF
 
     - name: Run tests with Docker

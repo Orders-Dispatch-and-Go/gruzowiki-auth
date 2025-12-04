@@ -58,6 +58,9 @@ services:
     networks:
       - gruzowiki_network
 
+volumes:
+  postgres_data_auth: 
+
 networks:
   gruzowiki_network:
     name: "gruzowiki-network"

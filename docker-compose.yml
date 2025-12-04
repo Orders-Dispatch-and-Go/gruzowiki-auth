@@ -5,9 +5,9 @@ services:
     env_file:
       - .env
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: postgres
+      POSTGRES_USER: ${AUTH_PG_USER}
+      POSTGRES_PASSWORD: ${AUTH_PG_PASSWORD}
+      POSTGRES_DB: ${AUTH_PG_DATABASE}
     ports:
       - "5432:5432"
     volumes:
@@ -22,9 +22,9 @@ services:
     env_file:
       - .env
     environment:
-      FLYWAY_URL: jdbc:postgresql://auth_db_postgres:5432/postgres
-      FLYWAY_USER: postgres
-      FLYWAY_PASSWORD: postgres
+      FLYWAY_URL: jdbc:postgresql://auth_db_postgres:5432/${AUTH_PG_DATABASE}
+      FLYWAY_USER: ${AUTH_PG_USER}
+      FLYWAY_PASSWORD: ${AUTH_PG_PASSWORD}
     command:
       - migrate
     volumes:
@@ -37,8 +37,9 @@ services:
       - gruzowiki_network
 
   auth_service:
-    build:
-      dockerfile: Dockerfile
+    image: ghcr.io/orders-dispatch-and-go/gruzowiki-auth:latest
+    # build:
+      # dockerfile: Dockerfile
     container_name: "auth-service"
     env_file:
       - .env
@@ -59,7 +60,7 @@ services:
       - gruzowiki_network
 
 volumes:
-  postgres_data_auth: 
+  postgres_data_auth:
 
 networks:
   gruzowiki_network:

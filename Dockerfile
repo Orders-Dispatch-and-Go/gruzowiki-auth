@@ -1,4 +1,4 @@
-FROM gradle:8.6.0-jdk17 AS test
+FROM gradle:jdk17-corretto AS test
 
 WORKDIR /auth-service
 COPY .env .
@@ -10,7 +10,7 @@ RUN gradle dependencies
 COPY src src
 RUN gradle test
 
-FROM gradle:8.6.0-jdk17 AS build
+FROM gradle:jdk17-corretto AS build
 
 WORKDIR /auth-service
 COPY .env .

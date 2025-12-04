@@ -38,14 +38,12 @@ services:
 
   auth_service:
     image: ghcr.io/orders-dispatch-and-go/gruzowiki-auth:latest
-    # build:
-      # dockerfile: Dockerfile
     container_name: "auth-service"
     env_file:
       - .env
     environment:
       AUTH_PG_HOST: auth_db_postgres
-      AUTH_PG_PORT: 5432
+      AUTH_PG_PORT: ${AUTH_PG_PORT}
       PUBLIC_KEY_FILE_PATH: keys/public/jws-public.pem
       PRIVATE_KEY_FILE_PATH: keys/private/jws-private.pem
     ports:
